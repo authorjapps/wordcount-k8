@@ -21,3 +21,20 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+
+*iml
+*.idea
+/target
+.DS_Store
+package.properties
+
+#for eclipse
+.classpath
+.project
+.settings
+
+*/target
+
+# This was added to ignore graphDB docker/graphql/docker_image/data folder which persists the data to the local disk
+**/data
