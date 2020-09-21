@@ -9,6 +9,8 @@ Bringing Up Kafka
 + Create a topic called `sentence` like below:
 + Confirm that topic exists by listing the topic
 ```shell script
+$docker exec -it kafka_kafka_1 bash
+
 root@62bcdce9da55:/bin# 
 kafka-topics --create --topic quickstart-events --bootstrap-server localhost:9092
 kafka-topics --describe --topic quickstart-events --bootstrap-server localhost:9092
@@ -34,3 +36,4 @@ another brown fox
 CLI Command Help
 ===
 + https://kafka.apache.org/quickstart
+
