@@ -6,7 +6,11 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Consumer {
     public static void main(String[] args) {
@@ -33,6 +37,15 @@ public class Consumer {
                 for (ConsumerRecord<String, String> rec : recs) {
                     System.out.printf("offset = %d, key = %s, value = %s\n",
                             rec.offset(), rec.key(), rec.value());
+
+                    List<String> list = Stream.of(rec.value())
+                            .map(w -> w.split("\\s+")).flatMap(Arrays::stream)
+                            .collect(Collectors.toList());
+
+                    Map<String, Integer > wordCounter = list.stream()
+                            .collect(Collectors.toMap(w -> w.toLowerCase(), w -> 1, Integer::sum));
+
+                    System.out.println("WordCount result - " +wordCounter);
                 }
             }
             counter++;
