@@ -33,7 +33,47 @@ A quick brown fox
 another brown fox
 ```
 
-CLI Command Help
+More
+===
+
++ List all the topics
+```shell script
+root@62bcdce9da55:/bin# 
+kafka-topics --list --bootstrap-server localhost:9092
+
+output:
+------
+__confluent.support.metrics
+__consumer_offsets
+demo-c1
+quickstart-events
+root@62bcdce9da55:/bin# 
+```
++ Create Topic With More Options
+```shell script
+> bin/kafka-topics.sh --create \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1 \
+    --topic streams-plaintext-input
+
+or
+
+> bin/kafka-topics.sh --create \
+    --bootstrap-server localhost:9092 \
+    --replication-factor 1 \
+    --partitions 1 \
+    --topic streams-wordcount-output \
+    --config cleanup.policy=compact
+Created topic "streams-wordcount-output".
+
+Refeerence: https://kafka.apache.org/25/documentation/streams/quickstart
+
+```
+
+CLI Commands Quick Start
 ===
 + https://kafka.apache.org/quickstart
++ Streams: https://kafka.apache.org/25/documentation/streams/quickstart
++ Code: https://github.com/apache/kafka/blob/2.5/streams/examples/src/main/java/org/apache/kafka/streams/examples/wordcount/WordCountDemo.java
 
