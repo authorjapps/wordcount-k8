@@ -31,7 +31,8 @@ public class Consumer {
             if (recs.count() == 0) {
             } else {
                 for (ConsumerRecord<String, String> rec : recs) {
-                    System.out.printf("Received %s: %s", rec.key(), rec.value());
+                    System.out.printf("offset = %d, key = %s, value = %s\n",
+                            rec.offset(), rec.key(), rec.value());
                 }
             }
             counter++;
