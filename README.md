@@ -76,4 +76,3 @@ CLI Commands Quick Start
 + https://kafka.apache.org/quickstart
 + Streams: https://kafka.apache.org/25/documentation/streams/quickstart
 + Code: https://github.com/apache/kafka/blob/2.5/streams/examples/src/main/java/org/apache/kafka/streams/examples/wordcount/WordCountDemo.java
-
