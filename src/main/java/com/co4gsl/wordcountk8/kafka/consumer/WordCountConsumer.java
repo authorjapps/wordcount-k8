@@ -7,10 +7,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -53,7 +50,9 @@ public class WordCountConsumer {
                         .collect(Collectors.toMap(w -> w.toLowerCase(), w -> 1, Integer::sum));
                 System.out.println("WordCount result - " +wordCounter);
 
-                //.map((key, value) -> new KeyValue<>(null, new WordCount(key.key(), value, new Date(key.window().start()), new Date(key.window().end()))));
+                StreamSupport.stream(wordCounter.entrySet().spliterator(), false)
+                        .map(entry -> new WordCount(entry.getKey(), entry.getValue(), new Date(), new Date()))
+                        .forEach(wordCountConsumer);
 
                 consumer.commitSync();
             }

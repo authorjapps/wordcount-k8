@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WordCountConsumerTest {
@@ -36,7 +37,7 @@ class WordCountConsumerTest {
     @Test
     void whenStartingByAssigningTopicPartition_thenExpectUpdatesAreConsumedCorrectly() {
         // GIVEN
-        consumer.schedulePollTask(() -> consumer.addRecord(record(TOPIC, PARTITION, "check that out", "check this out")));
+        consumer.schedulePollTask(() -> consumer.addRecord(record(TOPIC, PARTITION, "key", "check this out")));
         consumer.schedulePollTask(() -> wordCountConsumer.stop());
 
         HashMap<TopicPartition, Long> startOffsets = new HashMap<>();
@@ -48,16 +49,17 @@ class WordCountConsumerTest {
         wordCountConsumer.startByAssigning(TOPIC, PARTITION);
 
         // THEN
- //       assertEquals(1, updates.size());
+        assertEquals(3, updates.size());
         assertTrue(consumer.closed());
     }
 
     @Test
     void whenStartingBySubscribingToTopic_thenExpectUpdatesAreConsumedCorrectly() {
+
         // GIVEN
         consumer.schedulePollTask(() -> {
             consumer.rebalance(Collections.singletonList(new TopicPartition(TOPIC, 0)));
-            consumer.addRecord(record(TOPIC, PARTITION, "check that out", "check this out"));
+            consumer.addRecord(record(TOPIC, PARTITION, "key", "A brown fox jumped over a dog"));
         });
         consumer.schedulePollTask(() -> wordCountConsumer.stop());
 
@@ -70,11 +72,12 @@ class WordCountConsumerTest {
         wordCountConsumer.startBySubscribing(TOPIC);
 
         // THEN
-//       assertEquals(1, updates.size());
+        assertEquals(6, updates.size());
+        assertEquals(2, updates.get(1).getCount());
         assertTrue(consumer.closed());
     }
 
-    private ConsumerRecord<String, String> record(String topic, int partition, String word, String sentence) {
-        return new ConsumerRecord<>(topic, partition, 0, word, sentence);
+    private ConsumerRecord<String, String> record(String topic, int partition, String key, String sentenceValue) {
+        return new ConsumerRecord<>(topic, partition, 0, key, sentenceValue);
     }
 }
