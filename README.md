@@ -12,12 +12,14 @@ Bringing Up Kafka
 $docker exec -it kafka_kafka_1 bash
 
 root@62bcdce9da55:/bin# 
+kafka-topics --create --topic words --bootstrap-server localhost:9092
 kafka-topics --create --topic quickstart-events --bootstrap-server localhost:9092
 kafka-topics --describe --topic quickstart-events --bootstrap-server localhost:9092
 ```
 
 + Write somethings to the topic
 ```shell script
+kafka-console-producer --topic words --bootstrap-server localhost:9092
 root@62bcdce9da55:/bin# kafka-console-producer --topic quickstart-events --bootstrap-server localhost:9092
 >A quick brown fox
 >another brown fox
@@ -27,6 +29,7 @@ root@62bcdce9da55:/bin# kafka-console-producer --topic quickstart-events --boots
 + Read from the topic
 ```shell script
 root@62bcdce9da55:/bin# 
+kafka-console-consumer --topic words --from-beginning --bootstrap-server localhost:9092
 kafka-console-consumer --topic quickstart-events --from-beginning --bootstrap-server localhost:9092
 ```shell script
 A quick brown fox
