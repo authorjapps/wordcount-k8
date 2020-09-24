@@ -1,0 +1,31 @@
+{
+    "scenarioName": "Produce a sentence to words-topic and get word count from counts-topic @Rohit #DEV",
+    "steps": [
+        {
+            "name": "produce_msg",
+            "url": "kafka-topic:words",
+            "operation": "PRODUCE",
+            "request": {
+                "records":[
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "A New Brown Fox Jumped at ${RANDOM.NUMBER}"
+                    }
+                ]
+            },
+            "assertions": {
+                "status" : "Ok"
+            }
+        },
+        {
+            "name": "consume_msg",
+            "url": "kafka-topic:counts",
+            "operation": "CONSUME",
+            "request": {
+            },
+            "assertions": {
+                "size" : "$GT.0"
+            }
+        }
+    ]
+}
