@@ -74,6 +74,45 @@ Refeerence: https://kafka.apache.org/25/documentation/streams/quickstart
 
 ```
 
+Running The Tests
+===
++ First bring up Kafka via Docker
+  + > docker-compose up
++ Run the word counter main() to listen to "words" topic and write the count to "counts" topic 
+  + > Run via IDE => com.simple.SimpleConsumer
++ Run
+  + > mvn clean test
+  + or 
+  + > mvn clean install
+
+Docker Build And Publish
+===
+```shell script
+docker login
+docker login -u authorjapps -p <actual password>
+docker build -t wordcounter .
+docker tag wordcounter authorjapps/wordcounter:latest
+docker push authorjapps/wordcounter:latest
+
+e.g.
+CLI logs
+---------
+$ docker login registry.hub.docker.com
+Username: authorjapps
+Password: 
+Login Succeeded
+$ docker tag authorjapps/wordcounter:1.0.1 registry.hub.docker.com/authorjapps/wordcounter:1.0.1
+$ docker push registry.hub.docker.com/authorjapps/wordcounter:1.0.1                            
+The push refers to repository [registry.hub.docker.com/authorjapps/wordcounter]
+f09492e2ea8a: Pushed 
+ceaf9e1ebef5: Pushed 
+9b9b7f3d56a0: Pushed 
+f1b5933fe4b5: Pushed 
+1.0.1: digest: sha256:9b20d38f771874853cd12fc34c55b16ae1f18fe2de7561bc4365bad14346af4a size: 1158
+$ 
+
+```
+
 CLI Commands Quick Start
 ===
 + https://kafka.apache.org/quickstart

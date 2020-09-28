@@ -18,7 +18,7 @@
             }
         },
         {
-            "name": "consume_msg",
+            "name": "consume_count",
             "url": "kafka-topic:counts",
             "operation": "CONSUME",
             "request": {
