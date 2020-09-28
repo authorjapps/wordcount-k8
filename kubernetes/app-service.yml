@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordapp
+  namespace: wordapp-ns
+  labels:
+    app: wordapp
+spec:
+  ports:
+  - port: 5000
+  selector:
+    app: wordapp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordapp
+  namespace: wordapp-ns
+  labels:
+    app: wordapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: wordapp
+  template:
+    metadata:
+      labels:
+        app: wordapp
+    spec:
+      containers:
+      - name: wordapp-container
+        image: nfleet/wordcounter:1.0.0
+        resources:
+          limits:
+            cpu: 100m
+          requests:
+            cpu: 100m
+        ports:
+        - containerPort: 5000
