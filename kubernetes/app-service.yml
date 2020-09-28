@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: wordapp-container
-        image: nfleet/wordcounter:1.0.0
+        image: authorjapps/wordcounter:1.0.1
         resources:
           limits:
             cpu: 100m
