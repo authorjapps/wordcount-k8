@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: wordapp-container
-        image: authorjapps/wordcounter:1.0.1
+        image: authorjapps/wordcounter:1.0.2
         resources:
           limits:
             cpu: 100m
