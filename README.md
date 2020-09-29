@@ -111,6 +111,20 @@ f1b5933fe4b5: Pushed
 1.0.1: digest: sha256:9b20d38f771874853cd12fc34c55b16ae1f18fe2de7561bc4365bad14346af4a size: 1158
 $ 
 
+Latest:
+-------
+$ docker tag authorjapps/wordcounter:latest registry.hub.docker.com/authorjapps/wordcounter:latest
+$ docker push registry.hub.docker.com/authorjapps/wordcounter:latest                         
+
+```
+
+Docker run
+===
+```shell script
+docker run --rm \
+--env KAFKA_HOST=kafka-k8 \
+--env KAFKA_PORT=9096 \
+authorjapps/wordcounter:latest
 ```
 
 CLI Commands Quick Start
