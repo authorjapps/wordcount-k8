@@ -132,3 +132,15 @@ CLI Commands Quick Start
 + https://kafka.apache.org/quickstart
 + Streams: https://kafka.apache.org/25/documentation/streams/quickstart
 + Code: https://github.com/apache/kafka/blob/2.5/streams/examples/src/main/java/org/apache/kafka/streams/examples/wordcount/WordCountDemo.java
+
+
+```
+Create topic using zookeeper
+kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic Topic-Name
+
+Starting producer
+kafka-console-producer.sh --topic kafka-on-kubernetes --broker-list localhost:9092 --topic Topic-Name 
+
+Starting consumer using zookeeper (The --from-beginning command lists messages chronologically.)
+kafka-console-consumer.sh --topic Topic-Name --from-beginning --zookeeper localhost:2181 
+```

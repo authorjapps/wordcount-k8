@@ -30,12 +30,12 @@ spec:
     spec:
       containers:
       - name: wordapp-container
-        image: authorjapps/wordcounter:1.0.2
+        image: authorjapps/wordcounter:latest
         env:
         - name: KAFKA_HOST
-          value: kafka-service
+          value: localhost
         - name: KAFKA_PORT
-          value: 9096
+          value: "9093"
         resources:
           limits:
             cpu: 100m
