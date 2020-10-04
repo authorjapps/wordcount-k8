@@ -1,10 +1,7 @@
 package com.co4gsl.wordcountk8.kafka.producer;
 
 import com.simple.SimpleProducer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.clients.producer.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +13,7 @@ public class WordCountProducer {
 
     static Logger LOGGER = LoggerFactory.getLogger(SimpleProducer.class.getName());
 
-    private final Producer<String, String> producer;
+    private Producer<String, String> producer;
 
     public WordCountProducer() {
         this.producer = getProducer();
@@ -51,5 +48,9 @@ public class WordCountProducer {
 
     private static Producer<String, String> getProducer() {
         return new KafkaProducer<String, String>(producerProperties());
+    }
+
+    public void setProducer(Producer<String, String> mockProducer) {
+        producer = mockProducer;
     }
 }

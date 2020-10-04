@@ -3,10 +3,7 @@ package com.co4gsl.wordcountk8.kafka.consumer;
 import com.co4gsl.wordcountk8.entity.WordCount;
 import com.co4gsl.wordcountk8.kafka.producer.WordCountProducer;
 import com.simple.SimpleConsumer;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
@@ -102,5 +99,9 @@ public class WordCountConsumer {
         LOGGER.info("\n=> Consumer successfully produced message to topic {}", topicName);
         producer.flush();
         producer.close();
+    }
+
+    public void setConsumer(Consumer<String, String> mockConsumer) {
+        consumer = mockConsumer;
     }
 }

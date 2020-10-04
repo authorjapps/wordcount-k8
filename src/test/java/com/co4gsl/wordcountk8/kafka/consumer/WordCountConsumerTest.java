@@ -31,7 +31,8 @@ class WordCountConsumerTest {
     void setUp() {
         consumer = new MockConsumer<>(OffsetResetStrategy.EARLIEST);
         updates = new ArrayList<>();
-        wordCountConsumer = new WordCountConsumer(consumer, ex -> this.pollException = ex, updates::add);
+        wordCountConsumer = new WordCountConsumer(ex -> this.pollException = ex, updates::add);
+        wordCountConsumer.setConsumer(consumer);
     }
 
     @Test
