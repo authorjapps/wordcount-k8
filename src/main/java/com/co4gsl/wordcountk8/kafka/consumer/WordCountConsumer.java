@@ -1,26 +1,38 @@
 package com.co4gsl.wordcountk8.kafka.consumer;
 
 import com.co4gsl.wordcountk8.entity.WordCount;
+import com.co4gsl.wordcountk8.kafka.producer.WordCountProducer;
+import com.simple.SimpleConsumer;
 import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static com.simple.SimpleProducer.produce;
+import static com.simple.configs.ConsumerProperties.consumerProperties;
+
 public class WordCountConsumer {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(SimpleConsumer.class.getName());
+    public static final String TOPIC_TO_PRODUCE = "counts";
 
     private Consumer<String, String> consumer;
     private java.util.function.Consumer<Throwable> exceptionConsumer;
     private java.util.function.Consumer<WordCount> wordCountConsumer;
 
     public WordCountConsumer(
-            Consumer<String, String> consumer, java.util.function.Consumer<Throwable> exceptionConsumer,
+            java.util.function.Consumer<Throwable> exceptionConsumer,
             java.util.function.Consumer<WordCount> wordCountConsumer) {
-        this.consumer = consumer;
+        this.consumer = getConsumer();
         this.exceptionConsumer = exceptionConsumer;
         this.wordCountConsumer = wordCountConsumer;
     }
@@ -38,7 +50,8 @@ public class WordCountConsumer {
         try {
             beforePollingTask.run();
             while (true) {
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(3000));
+                printRecordsConsumed(records);
 
                 List<String> list = StreamSupport.stream(records.spliterator(), false)
                         .map(rec -> rec.value())
@@ -48,7 +61,8 @@ public class WordCountConsumer {
 
                 Map<String, Integer > wordCounter = list.stream()
                         .collect(Collectors.toMap(w -> w.toLowerCase(), w -> 1, Integer::sum));
-                System.out.println("WordCount result - " +wordCounter);
+                LOGGER.info("=> WordCount result - " +wordCounter);
+                produce(TOPIC_TO_PRODUCE, "{\"consumerResult\":" + wordCounter + "}");
 
                 StreamSupport.stream(wordCounter.entrySet().spliterator(), false)
                         .map(entry -> new WordCount(entry.getKey(), entry.getValue(), new Date(), new Date()))
@@ -57,7 +71,7 @@ public class WordCountConsumer {
                 consumer.commitSync();
             }
         } catch (WakeupException e) {
-            System.out.println("Shutting down...");
+            LOGGER.info("=> Shutting down...");
         } catch (RuntimeException ex) {
             exceptionConsumer.accept(ex);
         } finally {
@@ -67,5 +81,26 @@ public class WordCountConsumer {
 
     public void stop() {
         consumer.wakeup();
+    }
+
+    private static Consumer<String, String> getConsumer() {
+        return new KafkaConsumer(consumerProperties());
+    }
+
+    private static void printRecordsConsumed(ConsumerRecords<String, String> records) {
+        LOGGER.info("=> Consumer record count={}. \n   --------------------------", records.count());
+        for (ConsumerRecord<String, String> record : records) {
+            LOGGER.info("\n===> Key: " + record.key() + ", Value: " + record.value());
+            LOGGER.debug("===> Partition: " + record.partition() + ", Offset:" + record.offset());
+        }
+    }
+
+    private void produceTo(String topicName, String message) {
+        LOGGER.info("\n=> Sending record to topic:{}, message:{}", topicName, message);
+        WordCountProducer producer = new WordCountProducer();
+        producer.send(message, topicName);
+        LOGGER.info("\n=> Consumer successfully produced message to topic {}", topicName);
+        producer.flush();
+        producer.close();
     }
 }
