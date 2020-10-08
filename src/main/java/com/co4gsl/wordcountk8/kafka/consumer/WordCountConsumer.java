@@ -53,13 +53,19 @@ public class WordCountConsumer {
                 if (!records.isEmpty() || records.count() != 0) {
                     List<String> listOfWordsInMessage = StreamSupport.stream(records.spliterator(), false)
                             .map(rec -> rec.value())
-                            .map(str -> str.split("\\s+"))
+                            // clean data, remove punctuations and then split on space
+                            .map(str -> str.replaceAll("[^a-zA-Z ]", "")
+                                    .toLowerCase().split("\\s+"))
                             .flatMap(Arrays::stream)
                             .collect(Collectors.toList());
 
                     Map<String, Integer> wordCounter = listOfWordsInMessage.stream()
                             .collect(Collectors.toMap(w -> w.toLowerCase(), w -> 1, Integer::sum));
-
+//                    // If want to use line separator in the result block
+//                    String newline = System.getProperty("line.separator");
+//                    String result = StreamSupport.stream(wordCounter.entrySet().spliterator(), false)
+//                            .map(entry -> entry.getKey() + " : " + entry.getValue())
+//                            .collect(Collectors.joining(newline));
                     LOGGER.info("=> WordCount result - {}", wordCounter);
                     produceTo(TOPIC_TO_PRODUCE, "{\"consumerResult\":" + wordCounter + "}");
 
