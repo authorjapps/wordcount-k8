@@ -11,7 +11,7 @@ import static com.simple.configs.ProducerProperties.producerProperties;
 
 public class WordCountProducer {
 
-    static Logger LOGGER = LoggerFactory.getLogger(SimpleProducer.class.getName());
+    static Logger LOGGER = LoggerFactory.getLogger(WordCountProducer.class.getName());
 
     private Producer<String, String> producer;
 

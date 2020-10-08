@@ -2,8 +2,10 @@ package com.co4gsl.wordcountk8.kafka.consumer;
 
 import com.co4gsl.wordcountk8.entity.WordCount;
 import com.co4gsl.wordcountk8.kafka.producer.WordCountProducer;
-import com.simple.SimpleConsumer;
-import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
@@ -14,12 +16,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.simple.SimpleProducer.produce;
 import static com.simple.configs.ConsumerProperties.consumerProperties;
 
 public class WordCountConsumer {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(SimpleConsumer.class.getName());
+    private static Logger LOGGER = LoggerFactory.getLogger(WordCountConsumer.class.getName());
     public static final String TOPIC_TO_PRODUCE = "counts";
 
     private Consumer<String, String> consumer;
@@ -49,22 +50,23 @@ public class WordCountConsumer {
             while (true) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(3000));
                 printRecordsConsumed(records);
+                if (!records.isEmpty() || records.count() != 0) {
+                    List<String> listOfWordsInMessage = StreamSupport.stream(records.spliterator(), false)
+                            .map(rec -> rec.value())
+                            .map(str -> str.split("\\s+"))
+                            .flatMap(Arrays::stream)
+                            .collect(Collectors.toList());
 
-                List<String> list = StreamSupport.stream(records.spliterator(), false)
-                        .map(rec -> rec.value())
-                        .map(str -> str.split("\\s+"))
-                        .flatMap(Arrays::stream)
-                        .collect(Collectors.toList());
+                    Map<String, Integer> wordCounter = listOfWordsInMessage.stream()
+                            .collect(Collectors.toMap(w -> w.toLowerCase(), w -> 1, Integer::sum));
 
-                Map<String, Integer > wordCounter = list.stream()
-                        .collect(Collectors.toMap(w -> w.toLowerCase(), w -> 1, Integer::sum));
-                LOGGER.info("=> WordCount result - " +wordCounter);
-                produce(TOPIC_TO_PRODUCE, "{\"consumerResult\":" + wordCounter + "}");
+                    LOGGER.info("=> WordCount result - {}", wordCounter);
+                    produceTo(TOPIC_TO_PRODUCE, "{\"consumerResult\":" + wordCounter + "}");
 
-                StreamSupport.stream(wordCounter.entrySet().spliterator(), false)
-                        .map(entry -> new WordCount(entry.getKey(), entry.getValue(), new Date(), new Date()))
-                        .forEach(wordCountConsumer);
-
+                    StreamSupport.stream(wordCounter.entrySet().spliterator(), false)
+                            .map(entry -> new WordCount(entry.getKey(), entry.getValue(), new Date(), new Date()))
+                            .forEach(wordCountConsumer);
+                }
                 consumer.commitSync();
             }
         } catch (WakeupException e) {
@@ -85,10 +87,10 @@ public class WordCountConsumer {
     }
 
     private static void printRecordsConsumed(ConsumerRecords<String, String> records) {
-        LOGGER.info("=> Consumer record count={}. \n   --------------------------", records.count());
+        LOGGER.info("=> Consumer record count={}.", records.count());
         for (ConsumerRecord<String, String> record : records) {
             LOGGER.info("\n===> Key: " + record.key() + ", Value: " + record.value());
-            LOGGER.debug("===> Partition: " + record.partition() + ", Offset:" + record.offset());
+            LOGGER.info("\n===> Partition: " + record.partition() + ", Offset:" + record.offset());
         }
     }
 

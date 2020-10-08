@@ -73,8 +73,12 @@
                             <archive>
                                 <manifest>
                                     <mainClass>
-                                        com.simple.SimpleConsumer
+                                        com.co4gsl.wordcountk8.WordCountApplication
                                     </mainClass>
+<!--                                    <arguments>-->
+<!--                                        <argument>producer</argument>-->
+<!--                                        <argument>words</argument>-->
+<!--                                    </arguments>-->
                                 </manifest>
                             </archive>
                             <descriptorRefs>

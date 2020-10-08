@@ -1,5 +1,5 @@
 {
-    "scenarioName": "Produce a sentence to words-topic and get word count from counts-topic @Rohit #DEV",
+    "scenarioName": "Produce a sentence to words topic and get word count from counts topic",
     "steps": [
         {
             "name": "produce_msg",
@@ -9,7 +9,7 @@
                 "records":[
                     {
                         "key": "${RANDOM.NUMBER}",
-                        "value": "A New Brown Fox Jumped at ${RANDOM.NUMBER}"
+                        "value": "Kafka replicates the topic across the cluster. With replication, you can achieve fault tolerance. Also, with data mirroring, you can have data available across data centers. Consider your performance requirements and use only as many brokers as you need to achieve that level of performance, while leveraging technologies that replicate data to other hosts in the cluster in order to maximize availability, performance, and protection."
                     }
                 ]
             },

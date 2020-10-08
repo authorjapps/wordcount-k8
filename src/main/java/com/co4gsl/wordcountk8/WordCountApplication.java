@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class WordCountApplication {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(SimpleProducer.class.getName());
+    private static Logger LOGGER = LoggerFactory.getLogger(WordCountApplication.class.getName());
     public static final String STRING_TO_PROCESS = "Count the words and return the result";
 
     public static void main(String[] args) {
