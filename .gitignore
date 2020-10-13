@@ -1,6 +1,9 @@
 # Compiled class file
 *.class
 
+# terraform
+terraform/.terraform/plugins/*
+
 # Log file
 *.log
 
