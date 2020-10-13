@@ -1,6 +1,10 @@
 # Compiled class file
 *.class
 
+# terraform
+terraform/.terraform/plugins/*
+azurek8s
+
 # Log file
 *.log
 

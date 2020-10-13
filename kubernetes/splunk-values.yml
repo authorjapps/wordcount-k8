@@ -1,0 +1,52 @@
+
+global:
+  splunk:
+    hec:
+      protocol: https
+      insecureSSL: true
+      token: d9b7c03a-4713-47d1-81e6-483fbc371aa7
+      host: 192.168.1.9
+      port: 8088
+      indexName: events
+
+splunk-kubernetes-logging:
+  journalLogPath: /run/log/journal
+  splunk:
+    hec:
+      indexName: events
+
+splunk-kubernetes-objects:
+  objects:
+    core:
+      v1:
+        - name: pods
+        - name: namespaces
+        - name: nodes
+        - name: services
+        - name: config_maps
+        - name: persistent_volumes
+        - name: service_accounts
+        - name: persistent_volume_claims
+        - name: resource_quotas
+        - name: component_statuses
+        - name: events
+          mode: watch
+    apps:
+      v1:
+        - name: deployments
+        - name: daemon_sets
+        - name: replica_sets
+        - name: stateful_sets
+  splunk:
+    hec:
+      indexName: objects
+
+splunk-kubernetes-metrics:
+  kubernetes:
+    insecureSSL: true
+  splunk:
+    hec:
+      indexName: metrics
+
+
+# helm install --tiller-namespace splunk --namespace splunk --name kube-splunk -f splunk-values.yml
