@@ -144,3 +144,57 @@ kafka-console-producer.sh --topic kafka-on-kubernetes --broker-list localhost:90
 Starting consumer using zookeeper (The --from-beginning command lists messages chronologically.)
 kafka-console-consumer.sh --topic Topic-Name --from-beginning --zookeeper localhost:2181 
 ```
+
+Infrastructure as code using Terraform
+===
+```aidl
+Create a container in your Azure storage account
+$ az storage container create -n tfstate --account-name k8swctfstate --account-key <Storage account access key>
+```
+```aidl
+Initialize Terraform. Replace the placeholders with appropriate values for your environment.
+$ terraform init -backend-config=storage_account_name=k8swctfstate -backend-config=container_name=tfstate -backend-config=access_key=<Storage account access key> -backend-config=key=codelab.microsoft.tfstate
+```
+```aidl
+Create service principal with AKS (https://docs.microsoft.com/en-gb/azure/aks/kubernetes-service-principal)
+$ az ad sp create-for-rbac --skip-assignment --name K8RGAKSClusterServicePrincipal
+
+Output
+{
+  "appId": "yyyyyy",
+  "displayName": "K8RGAKSClusterServicePrincipal",
+  "name": "http://K8RGAKSClusterServicePrincipal",
+  "password": "xxxx",
+  "tenant": "05de7198-3db8-4537-9105-640818b4b423"
+}
+```
+```aidl
+# Environment variable - Export your service principal credentials
+$ export TF_VAR_client_id=<appId> 
+$ export TF_VAR_client_secret=<password>
+
+```
+```aidl
+Command to create the Terraform plan that defines the infrastructure elements. displays the resources that will be created when you run the terraform apply command.
+$ terraform plan -out out.plan
+```
+```aidl
+Command to apply the plan to create the Kubernetes cluster.
+$ terraform apply out.plan
+```
+```aidl
+Get the Kubernetes configuration from the Terraform state and store it in a file that kubectl can read.
+$ echo "$(terraform output kube_config)" > ./azurek8s
+```
+```aidl
+Set an environment variable so that kubectl picks up the correct config.
+$ export KUBECONFIG=./azurek8s
+
+Verify the health of the cluster.
+$ kubectl get nodes
+```
+
+```
+Command to delete all the resourses.
+$ terraform destroy
+```
